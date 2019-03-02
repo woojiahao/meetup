@@ -1,5 +1,6 @@
 package commands
 
+import configuration.meetupApiToken
 import me.aberrantfox.kjdautils.api.dsl.CommandSet
 import me.aberrantfox.kjdautils.api.dsl.commands
 
@@ -10,11 +11,9 @@ fun meetupCommands() = commands {
     execute {
       val meetupApiBaseUrl = "http://api.meetup.com"
 
-      val meetupKey = System.getenv("MEETUP_API_KEY")
-
       val parameters = mapOf(
         "topic_category" to "Tech",
-        "key" to meetupKey
+        "key" to meetupApiToken
       )
 
       val r = khttp.get("$meetupApiBaseUrl/find/upcoming_events", params = parameters)

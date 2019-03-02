@@ -1,9 +1,8 @@
+import configuration.botToken
 import me.aberrantfox.kjdautils.api.startBot
 
 fun main() {
-  val token = System.getenv("BOT_TOKEN")
-
-  startBot(token) {
+  startBot(botToken) {
     configure { prefix = "!" }
   }
 

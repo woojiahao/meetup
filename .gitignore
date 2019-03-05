@@ -16,3 +16,7 @@ gradle-app.setting
 .idea/
 *.iml
 out/
+
+*.ipr
+*.iws
+.DS_Store

@@ -2,7 +2,7 @@ import configuration.botToken
 import me.aberrantfox.kjdautils.api.startBot
 
 fun main() {
-  startBot(botToken) {
+  val jda = startBot(botToken) {
     configure { prefix = "!" }
   }
 

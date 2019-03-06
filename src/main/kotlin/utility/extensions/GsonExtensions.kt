@@ -1,4 +1,4 @@
-package utility
+package utility.extensions
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken

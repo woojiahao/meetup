@@ -12,7 +12,8 @@ data class Group(
   val state: String,
   val timezone: String,
   val urlName: String,
-  val who: String
+  val who: String,
+  val topics: List<Topic>?
 ) {
   enum class JoinMode {
     OPEN, APPROVAL, CLOSED

@@ -14,19 +14,12 @@ import java.time.format.DateTimeFormatter
 
 @CommandSet("meetup")
 fun meetupCommands() = commands {
-//  val categories = listOf(
-//    "Web Technology",
-//    "Web Development",
-//    "Computer programming",
-//    "Software Development",
-//    "Technology"
-//  )
-  val categories = listOf("Tech")
+  val categories = listOf(292)
   val meetup = Meetup()
 
   command("upcoming") {
     description = "Get upcoming tech events from Meetup.com"
-    expect(arg(IntegerArg("Page number"), true, 10))
+    expect(arg(IntegerArg("Page number"), true, 20))
     execute {
       with(it) {
         val pageCount = args.component1() as Int
@@ -45,7 +38,7 @@ fun meetupCommands() = commands {
   command("today") {
     description = "Get tech events happening today from Meetup.com"
     execute {
-      val upcomingEvents = meetup.findUpcomingEvents(50, categories, singaporeDateTime.plusDays(1))
+      val upcomingEvents = meetup.findUpcomingEvents(20, categories, singaporeDateTime)
       it.respond(eventsEmbed("Events happening today", upcomingEvents))
     }
   }
@@ -62,9 +55,7 @@ private fun eventsEmbed(title: String, events: List<Event>) =
     val footer = "Created on: ${singaporeDateTime.format(dateFormatter)}"
     setFooter(footer, meetupLogoUrl)
 
-    if (events.isEmpty()) {
-      description("No events available \uD83D\uDE22")
-    }
+    if (events.isEmpty()) description("No events available \uD83D\uDE22")
 
     events
       .sortedBy { it.localDate }

@@ -30,7 +30,13 @@ fun meetupCommands() = commands {
         }
 
         val upcomingEvents = meetup.findUpcomingEvents(pageCount, categories)
-        respond(eventsEmbed("Upcoming events", upcomingEvents))
+        respond(
+          eventsEmbed(
+            "Upcoming events",
+            Color.decode("#70ffb9"),
+            upcomingEvents
+          )
+        )
       }
     }
   }
@@ -38,18 +44,24 @@ fun meetupCommands() = commands {
   command("today") {
     description = "Get tech events happening today from Meetup.com"
     execute {
-      val upcomingEvents = meetup.findUpcomingEvents(20, categories, singaporeDateTime)
-      it.respond(eventsEmbed("Events happening today", upcomingEvents))
+      val todayEvents = meetup.findUpcomingEvents(20, categories, singaporeDateTime)
+      it.respond(
+        eventsEmbed(
+          "Events happening today",
+          Color.decode("#2979FF"),
+          todayEvents
+        )
+      )
     }
   }
 }
 
-private fun eventsEmbed(title: String, events: List<Event>) =
+private fun eventsEmbed(title: String, color: Color, events: List<Event>) =
   embed {
     val meetupLogoUrl = "https://secure.meetupstatic.com/s/img/786824251364989575000/logo/swarm/m_swarm_630x630.png"
 
     title(title)
-    color(Color.decode("#70ffb9"))
+    color(color)
 
     val dateFormatter = DateTimeFormatter.ofPattern("dd MMMM yyyy hh:mma")
     val footer = "Created on: ${singaporeDateTime.format(dateFormatter)}"

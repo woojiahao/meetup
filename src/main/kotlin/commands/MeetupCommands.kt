@@ -48,7 +48,7 @@ fun meetupCommands() = commands {
       it.respond(
         eventsEmbed(
           "Events happening today",
-          Color.decode("#2979FF"),
+          Color.decode("#42A5F5"),
           todayEvents
         )
       )

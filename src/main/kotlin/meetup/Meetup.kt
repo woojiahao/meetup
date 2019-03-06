@@ -30,6 +30,7 @@ class Meetup {
       "fields" to fields.joinToString(","),
       "start_date_range" to on?.minusDays(1)?.format(dateFormat),
       "end_date_range" to on?.plusDays(1)?.format(dateFormat),
+      "order" to "time",
       "key" to meetupApiToken
     ).mapNotNull { item -> item.value?.let { Pair(item.key, item.value.toString()) } }.toMap()
 
@@ -42,6 +43,12 @@ class Meetup {
       .read<JsonObject>(r.text)["events"]
       .asJsonArray
       .map { gson.read<Event>(it.asJsonObject.toString()) }
+      .filter {
+        on ?: return@filter true
+        it.localDate ?: return@filter true
+
+        on.toLocalDate() == it.localDate.toInstant().atZone(on.zone).toLocalDate()
+      }
   }
 
   private fun constructEndpoint(vararg path: String) = "$meetupApiBaseUrl${path.joinToString("/")}"

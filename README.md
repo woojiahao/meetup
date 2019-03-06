@@ -46,6 +46,7 @@ If you plan to host the bot on your own server, follow these steps to get setup.
     $ heroku config:set BOT_TOKEN=<discord_token>
     $ heroku config:set MEETUP_API_KEY=<meetup_api_key>
     $ heroku config:set GRADLE_TASK="shadowJar"
+    $ heroku config:set BOT_CHANNEL_<server> =<target_channel_id>
     ```
 
 5. Push the project to the Heroku remote

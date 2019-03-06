@@ -56,7 +56,7 @@ fun meetupCommands() = commands {
   }
 }
 
-private fun eventsEmbed(title: String, color: Color, events: List<Event>) =
+fun eventsEmbed(title: String, color: Color, events: List<Event>) =
   embed {
     val meetupLogoUrl = "https://secure.meetupstatic.com/s/img/786824251364989575000/logo/swarm/m_swarm_630x630.png"
 

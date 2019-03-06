@@ -62,7 +62,7 @@ If you plan to host the bot on your own server, follow these steps to get setup.
     ```
     
 ## Upcoming Features
-* [ ] Send upcoming events and today events automatically
+* [X] Send upcoming events and today events automatically
 * [X] Display today events
 * [ ] Integrate engineers.sg API
 

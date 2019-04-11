@@ -10,6 +10,7 @@ import utility.singaporeDateTime
 import utility.singaporeZone
 import java.awt.Color
 import java.util.*
+import java.util.concurrent.TimeUnit
 import kotlin.concurrent.timerTask
 
 private val meetup = Meetup()
@@ -48,6 +49,6 @@ private fun configureDailyPost(jda: JDA) {
         ).queue()
       }
     }
-    Timer().schedule(postTask, time)
+    Timer().scheduleAtFixedRate(postTask, time, TimeUnit.HOURS.toMillis(24))
   }
 }

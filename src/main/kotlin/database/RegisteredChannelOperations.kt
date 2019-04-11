@@ -27,7 +27,11 @@ fun getRegisteredChannels() =
   transaction {
     RegisteredChannels
       .select { RegisteredChannels.isEnabled eq true }
-      .map { it[RegisteredChannels.channelId] }
+      .map {
+        with(RegisteredChannels) {
+          RegisteredChannel(it[channelId], it[serverId], it[isEnabled])
+        }
+      }
   }
 
 private fun toggleChannel(channelId: String, state: Boolean) =

@@ -13,6 +13,8 @@ fun setup(databaseUrl: String) {
   }
 }
 
+class RegisteredChannel(val channelId: String, val serverId: String, val isEnabled: Boolean)
+
 object RegisteredChannels : Table() {
   val channelId = varchar("channel_id", 20).primaryKey()
   val serverId = varchar("server_id", 20)

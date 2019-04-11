@@ -1,5 +1,7 @@
 package commands
 
+import database.*
+import jdk.nashorn.internal.objects.NativeArray.forEach
 import me.aberrantfox.kjdautils.api.dsl.CommandSet
 import me.aberrantfox.kjdautils.api.dsl.arg
 import me.aberrantfox.kjdautils.api.dsl.commands
@@ -7,6 +9,7 @@ import me.aberrantfox.kjdautils.api.dsl.embed
 import me.aberrantfox.kjdautils.internal.command.arguments.IntegerArg
 import meetup.Meetup
 import models.Event
+import net.dv8tion.jda.core.JDA
 import utility.singaporeDateTime
 import java.awt.Color
 import java.text.SimpleDateFormat
@@ -54,7 +57,56 @@ fun meetupCommands() = commands {
       )
     }
   }
+
+  command("register") {
+    description = "Registers a channel for daily updates"
+    execute {
+      val channel = it.channel
+      val server = it.guild ?: return@execute
+      registerChannel(channel.id, server.id)
+      it.respond("Registered **${channel.name}** of **${server.name}** for daily updates")
+    }
+  }
+
+  command("unregister") {
+    description = "Unregisters a channel from daily updates"
+    execute {
+      val channel = it.channel
+      unregisterChannel(channel.id)
+      it.respond("Unregistered **${channel.name}** of **${it.guild?.name}** from daily updates")
+    }
+  }
+
+  command("registered") {
+    description = "View all registered channels"
+    execute {
+      val registeredChannels = getRegisteredChannels()
+      it.respond(registeredChannelsEmbed(it.jda, registeredChannels))
+    }
+  }
 }
+
+fun registeredChannelsEmbed(jda: JDA, registeredChannels: List<RegisteredChannel>) =
+  embed {
+    title("Registered channels")
+    color(Color.decode("#42A5F5"))
+    if (registeredChannels.isEmpty()) {
+      description("No registered channels. Run `!!register` in a channel to register the channel.")
+    } else {
+      registeredChannels
+        .groupBy { it.serverId }
+        .mapKeys { jda.getGuildById(it.key).name }
+        .forEach { serverName, registeredChannels ->
+          field {
+            name = serverName
+            value = registeredChannels.joinToString("\n") {
+              val channelName = jda.getTextChannelById(it.channelId).asMention
+              "$channelName :: ${it.channelId} :: ${it.isEnabled}"
+            }
+          }
+        }
+    }
+  }
 
 fun eventsEmbed(title: String, color: Color, events: List<Event>) =
   embed {

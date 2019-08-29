@@ -1,7 +1,9 @@
 package commands
 
-import database.*
-import jdk.nashorn.internal.objects.NativeArray.forEach
+import database.RegisteredChannel
+import database.getRegisteredChannels
+import database.registerChannel
+import database.unregisterChannel
 import me.aberrantfox.kjdautils.api.dsl.CommandSet
 import me.aberrantfox.kjdautils.api.dsl.arg
 import me.aberrantfox.kjdautils.api.dsl.commands

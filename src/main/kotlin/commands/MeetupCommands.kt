@@ -1,7 +1,9 @@
 package commands
 
-import database.*
-import jdk.nashorn.internal.objects.NativeArray.forEach
+import database.RegisteredChannel
+import database.getRegisteredChannels
+import database.registerChannel
+import database.unregisterChannel
 import me.aberrantfox.kjdautils.api.dsl.CommandSet
 import me.aberrantfox.kjdautils.api.dsl.arg
 import me.aberrantfox.kjdautils.api.dsl.commands
@@ -14,11 +16,15 @@ import utility.singaporeDateTime
 import java.awt.Color
 import java.text.SimpleDateFormat
 import java.time.format.DateTimeFormatter
+import java.util.*
+import java.util.concurrent.TimeUnit
+import kotlin.concurrent.timerTask
 
 @CommandSet("meetup")
 fun meetupCommands() = commands {
   val categories = listOf(292)
   val meetup = Meetup()
+  var dailyPostTimer: TimerTask? = null
 
   command("upcoming") {
     description = "Get upcoming tech events from Meetup.com"
@@ -84,9 +90,39 @@ fun meetupCommands() = commands {
       it.respond(registeredChannelsEmbed(it.jda, registeredChannels))
     }
   }
+
+  command("toggleDailyPosts") {
+    description = "Toggles the daily posts feature and allows updates to be sent daily at the time this command is triggered"
+    execute {
+      val currentTime = singaporeDateTime
+      with(currentTime) {
+        it.respond("Daily posts at ${format(DateTimeFormatter.ofPattern("hh.mm a"))}")
+
+        dailyPostTimer?.cancel()
+        dailyPostTimer = timerTask {
+          println("Daily post")
+          val todayEvents = meetup.findUpcomingEvents(20, listOf(292), singaporeDateTime)
+          getRegisteredChannels().forEach { channel ->
+            it.jda.getTextChannelById(channel.channelId).sendMessage(
+              eventsEmbed(
+                "Events happening today",
+                Color.decode("#42A5F5"),
+                todayEvents
+              )
+            ).queue()
+          }
+        }
+        Timer().scheduleAtFixedRate(
+          dailyPostTimer,
+          Date.from(currentTime.toInstant()),
+          TimeUnit.SECONDS.toMillis(30)
+        )
+      }
+    }
+  }
 }
 
-fun registeredChannelsEmbed(jda: JDA, registeredChannels: List<RegisteredChannel>) =
+private fun registeredChannelsEmbed(jda: JDA, registeredChannels: List<RegisteredChannel>) =
   embed {
     title("Registered channels")
     color(Color.decode("#42A5F5"))
@@ -96,7 +132,7 @@ fun registeredChannelsEmbed(jda: JDA, registeredChannels: List<RegisteredChannel
       registeredChannels
         .groupBy { it.serverId }
         .mapKeys { jda.getGuildById(it.key).name }
-        .forEach { serverName, registeredChannels ->
+        .forEach { (serverName, registeredChannels) ->
           field {
             name = serverName
             value = registeredChannels.joinToString("\n") {
@@ -108,7 +144,7 @@ fun registeredChannelsEmbed(jda: JDA, registeredChannels: List<RegisteredChannel
     }
   }
 
-fun eventsEmbed(title: String, color: Color, events: List<Event>) =
+private fun eventsEmbed(title: String, color: Color, events: List<Event>) =
   embed {
     val meetupLogoUrl = "https://secure.meetupstatic.com/s/img/786824251364989575000/logo/swarm/m_swarm_630x630.png"
 

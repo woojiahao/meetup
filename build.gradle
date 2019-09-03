@@ -48,3 +48,7 @@ jar {
     configurations.compile.collect { zipTree(it) }
   }
 }
+
+shadowJar {
+  archiveName("bot.${extension}")
+}

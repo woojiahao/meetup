@@ -1,3 +1,7 @@
+setup:
+  addons:
+    - plan: heroku-postgresql
+
 build:
   docker:
     worker: Dockerfile

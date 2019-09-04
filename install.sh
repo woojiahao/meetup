@@ -3,25 +3,17 @@ set_env() {
   heroku config:set "$1"="$2"
 }
 
+prompt_env_then_set() {
+  read -p "$1" variable
+  set_env "$2" "$variable"
+}
+
 read -p "Enter your application name: " applicationName
 heroku create "$applicationName"
 
 heroku addons:create heroku-postgresql:hobby-dev
 
-#read -p "Enter your database username provisioned by Heroku: " databaseUsername
-#heroku config:set DATABASE_USERNAME="$databaseUsername"
-#
-#read -sp "Enter your database password provisioned by Heroku: " databasePassword
-#heroku config:set DATABASE_PASSWORD="$databasePassword"
-
-read -sp "Enter your bot token: " botToken
-set_env "BOT_TOKEN" "$botToken"
-set_env "GRADLE_TASK" "shadowJar"
-git push heroku master
-
-jdbc_url=$JDBC_DATABASE_URL
-echo "$jdbc_url"
-set_env "DB_URL" "$jdbc_url"
+prompt_env_then_set "Enter your bot token: " "BOT_TOKEN"
 
 heroku stack:set container
 

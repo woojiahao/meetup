@@ -1,1 +1,1 @@
-worker: java -jar build/libs/meetup-1.0-all.jar
+worker: java -jar build/libs/bot.jar

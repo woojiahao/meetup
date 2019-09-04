@@ -11,7 +11,6 @@ val singaporeZone = ZoneId.of("Asia/Singapore") ?: throw IllegalArgumentExceptio
 val singaporeDateTime: ZonedDateTime
   get() = ZonedDateTime.now(singaporeZone)
 
-fun extractTimezoneDate(timezoneString: String): Date =
-  SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX")
-    .apply { timeZone = TimeZone.getTimeZone("GMT") }
-    .parse(timezoneString)
+fun extractTimezoneDate(timezoneString: String): ZonedDateTime =
+  ZonedDateTime.parse(timezoneString, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXXXX"))
+

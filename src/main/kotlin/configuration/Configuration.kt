@@ -1,7 +1,7 @@
 package configuration
 
 class DatabaseInformation(username: String, password: String, host: String, port: Int, database: String) {
-  private val databaseUrl = "jdbc:postgres://$host:$port/$database?user=$username&password=$password"
+  private val databaseUrl = "jdbc:postgresql://$host:$port/$database?user=$username&password=$password"
   override fun toString() = databaseUrl
 }
 

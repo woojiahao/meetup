@@ -13,11 +13,11 @@ private fun getDatabaseInformation(databaseUrl: String): DatabaseInformation {
   val matchResult = databaseUrlRegex.matchEntire(databaseUrl)
       ?: throw IllegalStateException("Database string is in improper format")
   with(matchResult.groups) {
-    val username = get(0)!!.value
-    val password = get(1)!!.value
-    val host = get(2)!!.value
-    val port = get(3)!!.value.toInt()
-    val database = get(4)!!.value
+    val username = get(1)!!.value
+    val password = get(2)!!.value
+    val host = get(3)!!.value
+    val port = get(4)!!.value.toInt()
+    val database = get(5)!!.value
     return DatabaseInformation(username, password, host, port, database)
   }
 }

@@ -21,7 +21,7 @@ git push heroku master
 
 jdbc_url=$JDBC_DATABASE_URL
 echo "$jdbc_url"
-set_env "DATABASE_URL" "$jdbc_url"
+set_env "DB_URL" "$jdbc_url"
 
 heroku stack:set container
 

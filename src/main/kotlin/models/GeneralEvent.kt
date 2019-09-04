@@ -1,6 +1,6 @@
 package models
 
-data class Event(
+data class GeneralEvent(
   val name: String,
   val venue: String,
   val url: String,

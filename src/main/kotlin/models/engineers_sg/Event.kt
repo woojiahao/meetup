@@ -3,7 +3,7 @@ package models.engineers_sg
 data class Event(
   val id: String,
   val name: String,
-  val description: String,
+  val description: String?,
   val location: String,
   val url: String,
   val groupId: String,

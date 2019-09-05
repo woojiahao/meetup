@@ -7,4 +7,4 @@ RUN gradle shadowJar
 FROM openjdk:8-jre-alpine
 WORKDIR /app
 COPY --from=builder /builder/build/libs/bot.jar .
-CMD ["java", "-jar", "bot.jar", "-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"]
+CMD ["java", "-XX:+UnlockExperimentalVMOptions", "-XX:+UseCGroupMemoryLimitForHeap", "-jar", "bot.jar"]

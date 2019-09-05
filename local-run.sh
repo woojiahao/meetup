@@ -11,5 +11,11 @@ else
   echo "Bot token to use :: $BOT_TOKEN"
 fi
 
-docker run -e BOT_TOKEN="$BOT_TOKEN" -e DATABASE_URL="$(heroku config:get DATABASE_URL)" -d sg-meetup-discord:latest
+if [[ $(git ls-remote --exit-code heroku) = 0 ]]; then
+  read -p "Enter your database url (postgres://<username>:<password>@<host>:<port>/<database>): " database
+else
+  database=$(heroku config:get DATABASE_URL)
+fi
+
+docker run -e BOT_TOKEN="$BOT_TOKEN" -e DATABASE_URL="$database" -d sg-meetup-discord:latest
 docker container ls

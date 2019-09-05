@@ -1,11 +1,7 @@
 #!/bin/bash
-set_env() {
-  heroku config:set "$1"="$2"
-}
-
 prompt_env_then_set() {
   read -p "$1" variable
-  set_env "$2" "$variable"
+  heroku config:set "$2"="$variable"
 }
 
 read -p "Enter your application name: " applicationName

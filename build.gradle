@@ -22,7 +22,7 @@ repositories {
 dependencies {
   implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
   implementation "com.github.jkcclemens:khttp:0.1.0"
-  implementation "com.gitlab.aberrantfox:Kutils:0.10.1"
+  implementation "com.gitlab.aberrantfox:Kutils:0.9.17"
   implementation 'org.jetbrains.exposed:exposed:0.17.3'
   implementation group: 'org.postgresql', name: 'postgresql', version: '42.2.6'
 

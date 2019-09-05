@@ -42,13 +42,13 @@ fun configurationCommands() = commands {
 private fun registeredChannelsEmbed(jda: JDA, registeredChannels: List<RegisteredChannel>) =
     embed {
       title("Registered Channels")
-      description("Channels registered will receive the daily updates")
+      description("Channels registered will receive daily updates")
       registeredChannels.groupBy { it.serverId }.forEach { (serverId, channelIds) ->
         field {
-          name = jda.getGuildById(serverId).name
+          name = jda.getGuildById(serverId)?.name
           value = channelIds
               .map { it.channelId }
-              .joinToString("\n") { "${jda.getTextChannelById(it).name} :: $it" }
+              .joinToString("\n") { "${jda.getTextChannelById(it)?.name} :: $it" }
         }
       }
     }

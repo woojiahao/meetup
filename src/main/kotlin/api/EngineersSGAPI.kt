@@ -32,6 +32,7 @@ class EngineersSGAPI : IMeetupAPI {
     return GeneralEvent(
       name,
       location,
+      groupName,
       url,
       startDateTime.date,
       endDateTime.date,
@@ -40,5 +41,8 @@ class EngineersSGAPI : IMeetupAPI {
     )
   }
 
-  override fun getEvents(size: Int) = queryEvents().map { it.generalise() }.subList(0, size + 1)
+  override fun getEvents(size: Int?): List<GeneralEvent> =
+      with(queryEvents().map { it.generalise() }) {
+        size?.let { subList(0, it + 1) } ?: this
+      }
 }

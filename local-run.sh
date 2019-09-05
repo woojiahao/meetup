@@ -1,4 +1,5 @@
 #!/bin/bash
+echo "Creating Docker image"
 docker build -t sg-meetup-discord .
 docker image ls
 
@@ -17,5 +18,6 @@ else
   database=$(heroku config:get DATABASE_URL)
 fi
 
+echo "Running Docker image"
 docker run -e BOT_TOKEN="$BOT_TOKEN" -e DATABASE_URL="$database" -d sg-meetup-discord:latest
 docker container ls

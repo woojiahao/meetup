@@ -1,13 +1,18 @@
 #!/bin/bash
-prompt_env_then_set() {
-  read -p "$1" variable
-  heroku config:set "$2"="$variable"
-}
-
 read -p "Enter your application name: " applicationName
+echo "Creating Heroku application"
 heroku create "$applicationName"
+
+echo "Adding Heroku Postgresql addon"
 heroku addons:create heroku-postgresql:hobby-dev
-prompt_env_then_set "Enter your bot token: " "BOT_TOKEN"
+
+read -p "Enter your bot token: " token
+heroku config:set BOT_TOKEN="$token"
+
+echo "Setting Heroku stack to Docker container"
 heroku stack:set container
+
 git push heroku master
+
+echo "Enabling Discord bot"
 heroku ps:scale worker=1

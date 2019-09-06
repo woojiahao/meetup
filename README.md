@@ -102,7 +102,7 @@ To push changes to Heroku, simply perform a `git push heroku master`.
    ```
 
 ## Upcoming Features
-* [ ] Send upcoming events and today events automatically
+* [X] Send upcoming events and today events automatically
 * [X] Display today events
 * [X] Integrate engineers.sg API
 * [X] Speed up Gradle builds

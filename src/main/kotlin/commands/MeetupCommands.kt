@@ -1,9 +1,14 @@
 package commands
 
 import api.EngineersSGAPI
-import me.aberrantfox.kjdautils.api.dsl.*
+import database.getRegisteredChannels
+import me.aberrantfox.kjdautils.api.dsl.CommandSet
+import me.aberrantfox.kjdautils.api.dsl.arg
+import me.aberrantfox.kjdautils.api.dsl.commands
+import me.aberrantfox.kjdautils.api.dsl.embed
 import me.aberrantfox.kjdautils.internal.command.arguments.IntegerArg
 import models.GeneralEvent
+import net.dv8tion.jda.core.JDA
 import utility.date
 import utility.singaporeDateTime
 import utility.singaporeZone
@@ -22,7 +27,7 @@ private val calendar = Calendar.getInstance(TimeZone.getTimeZone(singaporeZone))
   set(AM_PM, AM)
 }
 
-private fun generateTimer(events: List<GeneralEvent>, commandEvent: CommandEvent): ScheduledExecutorService {
+private fun generateTimer(events: List<GeneralEvent>, jda: JDA): ScheduledExecutorService {
   val currentTime = Date().time
 
   calendar.takeIf { it.time.time < currentTime }?.add(DATE, 1)
@@ -31,13 +36,15 @@ private fun generateTimer(events: List<GeneralEvent>, commandEvent: CommandEvent
 
   return Executors.newScheduledThreadPool(1).apply {
     scheduleAtFixedRate({
-      commandEvent.respond(
-        eventsEmbed(
-          "Events happening today",
-          "Auto-generated list of events happening today",
-          events
+      getRegisteredChannels().forEach {
+        jda.getTextChannelById(it.channelId).sendMessage(
+          eventsEmbed(
+            "Events happening today",
+            "Auto-generated list of events happening today",
+            events
+          )
         )
-      )
+      }
     }, delay, TimeUnit.DAYS.toMillis(1), TimeUnit.MILLISECONDS)
   }
 }
@@ -71,7 +78,7 @@ fun meetupCommands() = commands {
     execute {
       it.respond("Daily posts scheduled")
       dailyPostService?.shutdown()
-      dailyPostService = generateTimer(engineersSGAPI.getEvents(null), it)
+      dailyPostService = generateTimer(engineersSGAPI.getEvents(null), it.jda)
     }
   }
 }

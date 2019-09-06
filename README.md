@@ -105,7 +105,8 @@ To push changes to Heroku, simply perform a `git push heroku master`.
 * [ ] Send upcoming events and today events automatically
 * [X] Display today events
 * [X] Integrate engineers.sg API
-* [ ] Speed up Gradle builds
+* [X] Speed up Gradle builds
+* [ ] Due to the nature of how KUtils work, JDA cannot be initialised at the start so either move away from KUtils or use a different library
 * [ ] Write blog post about deploying Java apps on Docker - memory issue
 
 ## Libraries Used

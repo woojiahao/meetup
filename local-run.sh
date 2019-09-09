@@ -1,8 +1,4 @@
 #!/bin/bash
-echo "Creating Docker image"
-docker build -t sg-meetup-discord .
-docker image ls
-
 if [[ -z "$BOT_TOKEN" ]]; then
   read -p "Enter your bot token: " token
   echo "Saving bot token :: $token"
@@ -11,6 +7,11 @@ if [[ -z "$BOT_TOKEN" ]]; then
 else
   echo "Bot token to use :: $BOT_TOKEN"
 fi
+
+echo "Creating Docker image"
+docker build -t sg-meetup-discord .
+docker image ls
+
 
 if [[ $(git ls-remote --exit-code heroku) = 0 ]]; then
   read -p "Enter your database url (postgres://<username>:<password>@<host>:<port>/<database>): " database

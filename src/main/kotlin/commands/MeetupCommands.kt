@@ -12,30 +12,36 @@ import net.dv8tion.jda.core.JDA
 import utility.date
 import utility.singaporeDateTime
 import utility.singaporeZone
+import utility.toEpochMilli
 import java.awt.Color
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.*
-import java.util.Calendar.*
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 
-private val calendar = Calendar.getInstance(TimeZone.getTimeZone(singaporeZone)).apply {
-  set(HOUR_OF_DAY, 10)
-  set(MINUTE, 0)
-  set(SECOND, 0)
-  set(AM_PM, AM)
-}
+private val fixedTime = LocalDate.now(singaporeZone).atTime(10, 0)
 
 private fun generateTimer(events: List<GeneralEvent>, jda: JDA): ScheduledExecutorService {
-  val currentTime = Date().time
+  val formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy hh:mma")
 
-  calendar.takeIf { it.time.time < currentTime }?.add(DATE, 1)
+  println("Generating timer event for daily posts")
+  println("Current calendar is posting on ${fixedTime.format(formatter)}")
 
-  val delay = calendar.time.time - currentTime
+  val currentTime = singaporeDateTime.toInstant().toEpochMilli()
+
+  val timeDifference = fixedTime.toEpochMilli(singaporeZone) - currentTime
+  println("Time difference is $timeDifference")
+
+  val postingTime = if (timeDifference < 0) fixedTime.plusDays(1) else fixedTime
+  println("Events to be posted on ${postingTime.format(formatter)}")
+
+  val delay = postingTime.toEpochMilli(singaporeZone) - currentTime
+  println("Delay will be $delay")
 
   return Executors.newScheduledThreadPool(1).apply {
     scheduleAtFixedRate({
+      println("Scheduling timer task to send updates")
       getRegisteredChannels().forEach {
         jda.getTextChannelById(it.channelId).sendMessage(
           eventsEmbed(

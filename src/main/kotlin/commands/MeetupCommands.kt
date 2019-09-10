@@ -14,25 +14,24 @@ import utility.singaporeZone
 import utility.toEpochMilli
 import java.awt.Color
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 
-private val fixedTime = LocalDate.now(singaporeZone).atTime(10, 45)
-
-private fun generateTimer(action: () -> Unit): ScheduledExecutorService {
+private fun scheduleDailyTask(timeToTrigger: LocalDateTime, action: () -> Unit): ScheduledExecutorService {
   val formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy hh:mma")
 
   println("Generating timer event for daily posts")
-  println("Current calendar is posting on ${fixedTime.format(formatter)}")
+  println("Current calendar is posting on ${timeToTrigger.format(formatter)}")
 
   val currentTime = singaporeDateTime.toInstant().toEpochMilli()
 
-  val timeDifference = fixedTime.toEpochMilli(singaporeZone) - currentTime
+  val timeDifference = timeToTrigger.toEpochMilli(singaporeZone) - currentTime
   println("Time difference is $timeDifference")
 
-  val postingTime = if (timeDifference < 0) fixedTime.plusDays(1) else fixedTime
+  val postingTime = if (timeDifference < 0) timeToTrigger.plusDays(1) else timeToTrigger
   println("Events to be posted on ${postingTime.format(formatter)}")
 
   val delay = postingTime.toEpochMilli(singaporeZone) - currentTime
@@ -68,24 +67,44 @@ fun meetupCommands() = commands {
   }
 
   command("daily") {
-    description = "Enables the daily task timer to send updates at 10am"
+    description = "Enables the daily task timer to send updates at specified time"
+    expect(IntegerArg("Hour"), IntegerArg("Minute"))
     execute {
       it.respond("Daily posts scheduled")
+
+      val hour = it.args[0] as Int
+      val minute = it.args[1] as Int
+
+      if (hour !in 0..23) {
+        it.respond("Hour must be between 0 and 23")
+        return@execute
+      }
+
+      if (minute !in 0..59) {
+        it.respond("Minute must be between 0 and 59")
+        return@execute
+      }
+
+      val timeToPost = LocalDate.now(singaporeZone).atTime(hour, minute)
+
       dailyPostService?.shutdown()
-      dailyPostService = generateTimer() {
-        val events = engineersSGAPI.getEvents(null)
+
+      dailyPostService = scheduleDailyTask(timeToPost) {
+        val events = engineersSGAPI.getEvents(null).filter { event -> event.startDate == singaporeDateTime.date }
+
         println("Scheduling timer task to send updates")
-        val registeredChannels = getRegisteredChannels()
-        println("Registered channels: ${registeredChannels.joinToString(",") { it.channelId }}")
-        for (registeredChannel in registeredChannels) {
-          println("Sending to ${registeredChannel.channelId}")
-          it.jda.getTextChannelById(registeredChannel.channelId).sendMessage(
-            eventsEmbed(
-              "Events happening today",
-              "Auto-generated list of events happening today",
-              events
-            )
-          ).queue()
+
+        val registeredChannels = getRegisteredChannels().map { registeredChannel -> registeredChannel.channelId }
+        println("Registered channels: ${registeredChannels.joinToString(",")}")
+        val textChannels = registeredChannels.map { id -> it.jda.getTextChannelById(id) }
+
+        textChannels.forEach { textChannel ->
+          println("Sending to ${textChannel.name}")
+          textChannel.sendMessage(eventsEmbed(
+            "Events happening today",
+            "Events happening in Singapore today!",
+            events
+          )).queue()
         }
       }
     }

@@ -8,7 +8,6 @@ import me.aberrantfox.kjdautils.api.dsl.commands
 import me.aberrantfox.kjdautils.api.dsl.embed
 import me.aberrantfox.kjdautils.internal.command.arguments.IntegerArg
 import models.GeneralEvent
-import net.dv8tion.jda.core.JDA
 import utility.date
 import utility.singaporeDateTime
 import utility.singaporeZone
@@ -20,9 +19,9 @@ import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 
-private val fixedTime = LocalDate.now(singaporeZone).atTime(10, 10)
+private val fixedTime = LocalDate.now(singaporeZone).atTime(10, 20)
 
-private fun generateTimer(events: List<GeneralEvent>, jda: JDA): ScheduledExecutorService {
+private fun generateTimer(action: () -> Unit): ScheduledExecutorService {
   val formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy hh:mma")
 
   println("Generating timer event for daily posts")
@@ -40,19 +39,7 @@ private fun generateTimer(events: List<GeneralEvent>, jda: JDA): ScheduledExecut
   println("Delay will be $delay")
 
   return Executors.newScheduledThreadPool(1).apply {
-    scheduleAtFixedRate({
-      println("Scheduling timer task to send updates")
-      getRegisteredChannels().forEach {
-        println("Sending to ${it.channelId}")
-        jda.getTextChannelById(it.channelId).sendMessage(
-          eventsEmbed(
-            "Events happening today",
-            "Auto-generated list of events happening today",
-            events
-          )
-        ).queue()
-      }
-    }, delay, TimeUnit.DAYS.toMillis(1), TimeUnit.MILLISECONDS)
+    scheduleAtFixedRate({ action() }, delay, TimeUnit.DAYS.toMillis(1), TimeUnit.MILLISECONDS)
   }
 }
 
@@ -85,7 +72,22 @@ fun meetupCommands() = commands {
     execute {
       it.respond("Daily posts scheduled")
       dailyPostService?.shutdown()
-      dailyPostService = generateTimer(engineersSGAPI.getEvents(null), it.jda)
+      dailyPostService = generateTimer() {
+        val events = engineersSGAPI.getEvents(null)
+        println("Scheduling timer task to send updates")
+        val registeredChannels = getRegisteredChannels()
+        println("Registered channels: ${registeredChannels.joinToString(",") { it.channelId }}")
+        registeredChannels.forEach { channel ->
+          println("Sending to $channel")
+          it.jda.getTextChannelById(channel.channelId).sendMessage(
+            eventsEmbed(
+              "Events happening today",
+              "Auto-generated list of events happening today",
+              events
+            )
+          ).queue()
+        }
+      }
     }
   }
 }

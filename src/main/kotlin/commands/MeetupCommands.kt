@@ -20,7 +20,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 
-private val fixedTime = LocalDate.now(singaporeZone).atTime(10, 0)
+private val fixedTime = LocalDate.now(singaporeZone).atTime(10, 10)
 
 private fun generateTimer(events: List<GeneralEvent>, jda: JDA): ScheduledExecutorService {
   val formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy hh:mma")
@@ -43,13 +43,14 @@ private fun generateTimer(events: List<GeneralEvent>, jda: JDA): ScheduledExecut
     scheduleAtFixedRate({
       println("Scheduling timer task to send updates")
       getRegisteredChannels().forEach {
+        println("Sending to ${it.channelId}")
         jda.getTextChannelById(it.channelId).sendMessage(
           eventsEmbed(
             "Events happening today",
             "Auto-generated list of events happening today",
             events
           )
-        )
+        ).queue()
       }
     }, delay, TimeUnit.DAYS.toMillis(1), TimeUnit.MILLISECONDS)
   }

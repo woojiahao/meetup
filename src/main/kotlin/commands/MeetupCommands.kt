@@ -19,7 +19,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 
-private val fixedTime = LocalDate.now(singaporeZone).atTime(10, 25)
+private val fixedTime = LocalDate.now(singaporeZone).atTime(10, 45)
 
 private fun generateTimer(action: () -> Unit): ScheduledExecutorService {
   val formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy hh:mma")
@@ -77,9 +77,9 @@ fun meetupCommands() = commands {
         println("Scheduling timer task to send updates")
         val registeredChannels = getRegisteredChannels()
         println("Registered channels: ${registeredChannels.joinToString(",") { it.channelId }}")
-        registeredChannels.forEach { channel ->
-          println("Sending to $channel")
-          it.jda.getTextChannelById(channel.channelId).sendMessage(
+        for (registeredChannel in registeredChannels) {
+          println("Sending to ${registeredChannel.channelId}")
+          it.jda.getTextChannelById(registeredChannel.channelId).sendMessage(
             eventsEmbed(
               "Events happening today",
               "Auto-generated list of events happening today",

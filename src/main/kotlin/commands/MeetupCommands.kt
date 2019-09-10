@@ -19,7 +19,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 
-private val fixedTime = LocalDate.now(singaporeZone).atTime(10, 20)
+private val fixedTime = LocalDate.now(singaporeZone).atTime(10, 25)
 
 private fun generateTimer(action: () -> Unit): ScheduledExecutorService {
   val formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy hh:mma")

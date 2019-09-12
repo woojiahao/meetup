@@ -15,10 +15,18 @@ fun setup(databaseUrl: String) {
 
 class RegisteredChannel(val channelId: String, val serverId: String, val isEnabled: Boolean)
 
-class Configuration(val index: Int, val configurationName: String, val configurationValue: String)
+class Configuration(val index: Int, val configurationName: String, val configurationValue: String) {
+  enum class Name {
+    DAILY_POST_TIMING_HOUR, DAILY_POST_TIMING_MINUTE
+  }
 
-enum class ConfigurationName {
-  DAILY_POST_TIMING_HOUR, DAILY_POST_TIMING_MINUTE
+  fun check(error: String, predicate: (Configuration) -> Boolean = { true }) =
+    with(this) {
+      require(predicate(this)) { error }
+      this
+    }
+
+  fun <T> getValue(modification: (String) -> T) = modification(configurationValue)
 }
 
 object RegisteredChannels : Table() {

@@ -12,13 +12,13 @@ private fun dailyPostTimingCheck(dailyPostTiming: DailyPostTiming) {
 fun getDailyPostTiming(): DailyPostTiming? =
   transaction {
     val dailyPostTimingHour = getConfiguration(Configuration.Name.DAILY_POST_TIMING_HOUR)
-      ?.check("Hour must be an integer") { it.configurationValue.toIntOrNull() != null }
-      ?.check("Hour must be between 0 and 23") { it.configurationValue.toInt() in 0..23 }
+      ?.check("Hour must be an integer") { it.value.toIntOrNull() != null }
+      ?.check("Hour must be between 0 and 23") { it.value.toInt() in 0..23 }
       ?.getValue { it.toInt() }
 
     val dailyPostTimingMinute = getConfiguration(Configuration.Name.DAILY_POST_TIMING_MINUTE)
-      ?.check("Minute must be an integer") { it.configurationValue.toIntOrNull() != null }
-      ?.check("Minute must be between 0 and 59") { it.configurationValue.toInt() in 0..59 }
+      ?.check("Minute must be an integer") { it.value.toIntOrNull() != null }
+      ?.check("Minute must be between 0 and 59") { it.value.toInt() in 0..59 }
       ?.getValue { it.toInt() }
 
     if (dailyPostTimingHour == null || dailyPostTimingMinute == null) null

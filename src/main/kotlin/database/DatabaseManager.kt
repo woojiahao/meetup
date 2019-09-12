@@ -15,7 +15,7 @@ fun setup(databaseUrl: String) {
 
 class RegisteredChannel(val channelId: String, val serverId: String, val isEnabled: Boolean)
 
-class Configuration(val index: Int, val configurationName: String, val configurationValue: String) {
+class Configuration(val index: Int, val name: String, val value: String) {
   enum class Name {
     DAILY_POST_TIMING_HOUR, DAILY_POST_TIMING_MINUTE
   }
@@ -26,7 +26,7 @@ class Configuration(val index: Int, val configurationName: String, val configura
       this
     }
 
-  fun <T> getValue(modification: (String) -> T) = modification(configurationValue)
+  fun <T> getValue(modification: (String) -> T) = modification(value)
 }
 
 object RegisteredChannels : Table() {

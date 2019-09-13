@@ -1,4 +1,4 @@
-package commands
+package com.github.woojiahao.commands
 
 import api.EngineersSGAPI
 import database.getRegisteredChannels
@@ -6,7 +6,7 @@ import me.aberrantfox.kjdautils.api.dsl.CommandSet
 import me.aberrantfox.kjdautils.api.dsl.arg
 import me.aberrantfox.kjdautils.api.dsl.commands
 import me.aberrantfox.kjdautils.api.dsl.embed
-import me.aberrantfox.kjdautils.internal.command.arguments.IntegerArg
+import me.aberrantfox.kjdautils.internal.arguments.IntegerArg
 import models.GeneralEvent
 import utility.date
 import utility.singaporeDateTime
@@ -96,15 +96,15 @@ fun meetupCommands() = commands {
 
         val registeredChannels = getRegisteredChannels().map { registeredChannel -> registeredChannel.channelId }
         println("Registered channels: ${registeredChannels.joinToString(",")}")
-        val textChannels = registeredChannels.map { id -> it.jda.getTextChannelById(id) }
+        val textChannels = registeredChannels.map { id -> it.discord.jda.getTextChannelById(id) }
 
         textChannels.forEach { textChannel ->
-          println("Sending to ${textChannel.name}")
-          textChannel.sendMessage(eventsEmbed(
+          println("Sending to ${textChannel?.name}")
+          textChannel?.sendMessage(eventsEmbed(
             "Events happening today",
             "Events happening in Singapore today!",
             events
-          )).queue()
+          ))?.queue()
         }
       }
     }
@@ -112,26 +112,22 @@ fun meetupCommands() = commands {
 }
 
 private fun eventsEmbed(title: String, description: String, events: List<GeneralEvent>) =
-    embed {
-      title(title)
-      description(description)
-      setFooter(
-        "Events list generated at ${singaporeDateTime.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"))}",
-        "https://pbs.twimg.com/profile_images/939337823785594880/YZBJObdX_400x400.jpg"
-      )
-      color(Color.decode("#03fcbe"))
+  embed {
+    this.title = title
+    this.description = description
+    this.color = Color.decode("#03fcbe")
 
-      if (events.isEmpty()) {
+    if (events.isEmpty()) {
+      field {
+        name = "No events"
+        value = "There are no events currently."
+      }
+    } else {
+      events.forEach {
         field {
-          name = "No events"
-          value = "There are no events currently."
-        }
-      } else {
-        events.forEach {
-          field {
-            name = it.name
-            value = "on __${it.startDate}__ at __${it.startTime}__ by ${it.organiser}\n[Learn more](${it.url})"
-          }
+          name = it.name
+          value = "on __${it.startDate}__ at __${it.startTime}__ by ${it.organiser}\n[Learn more](${it.url})"
         }
       }
     }
+  }

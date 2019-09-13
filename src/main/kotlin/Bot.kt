@@ -5,5 +5,13 @@ import me.aberrantfox.kjdautils.api.startBot
 
 fun main() {
   setup(databaseUrl)
-  startBot(botToken) { configure { prefix = "!" } }
+
+  val kUtils = startBot(botToken) {
+    configure {
+      prefix = "!"
+      globalPath = "com.github.woojiahao"
+    }
+  }
+  
+  kUtils.discord.jda.awaitReady()
 }

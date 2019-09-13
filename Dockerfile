@@ -1,10 +1,10 @@
-FROM gradle:5.6.1-jdk8 AS builder
+FROM gradle:5.6.1-jdk11 AS builder
 USER root
 WORKDIR /builder
 ADD . /builder
 RUN gradle shadowJar
 
-FROM openjdk:8-jre-alpine
+FROM openjdk:11.0-jre-stretch
 WORKDIR /app
 COPY --from=builder /builder/build/libs/bot.jar .
-CMD ["java", "-XX:+UnlockExperimentalVMOptions", "-XX:+UseCGroupMemoryLimitForHeap", "-jar", "bot.jar"]
+CMD ["java", "-jar", "bot.jar"]

@@ -1,4 +1,4 @@
-package commands
+package com.github.woojiahao.commands
 
 import me.aberrantfox.kjdautils.api.dsl.CommandSet
 import me.aberrantfox.kjdautils.api.dsl.commands
@@ -9,7 +9,7 @@ import java.awt.Color
 fun utilityCommands() = commands {
   command("ping") {
     description = "Displays bot ping"
-    execute { it.respond("Pong! - ${it.jda.ping}ms") }
+    execute { it.respond("Pong! - ${it.discord.jda.gatewayPing}ms") }
   }
 
   command("source") {
@@ -25,8 +25,8 @@ fun utilityCommands() = commands {
 
 private fun aboutEmbed() =
   embed {
-    title("About Meetup")
-    color(Color.decode("#7E57C2"))
+    title = "About Meetup"
+    color = Color.decode("#7E57C2")
 
     field {
       name = "Description"

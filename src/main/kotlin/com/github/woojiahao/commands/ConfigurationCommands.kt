@@ -1,4 +1,4 @@
-package commands
+package com.github.woojiahao.commands
 
 import database.RegisteredChannel
 import database.getRegisteredChannels
@@ -7,7 +7,7 @@ import database.unregisterChannel
 import me.aberrantfox.kjdautils.api.dsl.CommandSet
 import me.aberrantfox.kjdautils.api.dsl.commands
 import me.aberrantfox.kjdautils.api.dsl.embed
-import net.dv8tion.jda.core.JDA
+import net.dv8tion.jda.api.JDA
 
 @CommandSet("configuration")
 fun configurationCommands() = commands {
@@ -34,21 +34,21 @@ fun configurationCommands() = commands {
     description = "View all registered channels"
     execute {
       val registeredChannels = getRegisteredChannels()
-      it.respond(registeredChannelsEmbed(it.jda, registeredChannels))
+      it.respond(registeredChannelsEmbed(it.discord.jda, registeredChannels))
     }
   }
 }
 
 private fun registeredChannelsEmbed(jda: JDA, registeredChannels: List<RegisteredChannel>) =
-    embed {
-      title("Registered Channels")
-      description("Channels registered will receive daily updates")
-      registeredChannels.groupBy { it.serverId }.forEach { (serverId, channelIds) ->
-        field {
-          name = jda.getGuildById(serverId)?.name
-          value = channelIds
-              .map { it.channelId }
-              .joinToString("\n") { "${jda.getTextChannelById(it)?.name} :: $it" }
-        }
+  embed {
+    title = "Registered Channels"
+    description = "Channels registered will receive daily updates"
+    registeredChannels.groupBy { it.serverId }.forEach { (serverId, channelIds) ->
+      field {
+        name = jda.getGuildById(serverId)?.name
+        value = channelIds
+          .map { it.channelId }
+          .joinToString("\n") { "${jda.getTextChannelById(it)?.name} :: $it" }
       }
     }
+  }

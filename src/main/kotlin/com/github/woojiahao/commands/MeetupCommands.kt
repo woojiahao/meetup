@@ -1,26 +1,26 @@
 package com.github.woojiahao.commands
 
-import api.EngineersSGAPI
+import dailyPostService
+import database.DailyPostTiming
 import database.getRegisteredChannels
+import database.setDailyPostTiming
+import engineersSGAPI
 import me.aberrantfox.kjdautils.api.dsl.CommandSet
 import me.aberrantfox.kjdautils.api.dsl.arg
 import me.aberrantfox.kjdautils.api.dsl.commands
 import me.aberrantfox.kjdautils.api.dsl.embed
 import me.aberrantfox.kjdautils.internal.arguments.IntegerArg
 import models.GeneralEvent
+import net.dv8tion.jda.api.JDA
 import utility.date
 import utility.scheduleDailyTask
 import utility.singaporeDateTime
 import utility.singaporeZone
 import java.awt.Color
 import java.time.LocalDate
-import java.util.concurrent.ScheduledExecutorService
 
 @CommandSet("meetup")
 fun meetupCommands() = commands {
-  val engineersSGAPI = EngineersSGAPI()
-  var dailyPostService: ScheduledExecutorService? = null
-
   command("upcoming") {
     description = "Displays the upcoming events in Singapore"
     expect(arg(IntegerArg, true, 10))
@@ -59,28 +59,36 @@ fun meetupCommands() = commands {
         return@execute
       }
 
-      val timeToPost = LocalDate.now(singaporeZone).atTime(hour, minute)
+      val dailyPostTiming = DailyPostTiming(hour, minute)
 
-      dailyPostService?.shutdown()
+      setDailyPostTiming(dailyPostTiming)
 
-      dailyPostService = scheduleDailyTask(timeToPost) {
-        val events = engineersSGAPI.getEvents(null).filter { event -> event.startDate == singaporeDateTime.date }
+      scheduleDailyUpdate(dailyPostTiming, it.discord.jda)
+    }
+  }
+}
 
-        println("Scheduling timer task to send updates")
+fun scheduleDailyUpdate(dailyPostTiming: DailyPostTiming, jda: JDA) {
+  val timeToPost = LocalDate.now(singaporeZone).atTime(dailyPostTiming.hour, dailyPostTiming.minute)
 
-        val registeredChannels = getRegisteredChannels().map { registeredChannel -> registeredChannel.channelId }
-        println("Registered channels: ${registeredChannels.joinToString(",")}")
-        val textChannels = registeredChannels.map { id -> it.discord.jda.getTextChannelById(id) }
+  dailyPostService?.shutdown()
 
-        textChannels.forEach { textChannel ->
-          println("Sending to ${textChannel?.name}")
-          textChannel?.sendMessage(eventsEmbed(
-            "Events happening today",
-            "Events happening in Singapore today!",
-            events
-          ))?.queue()
-        }
-      }
+  dailyPostService = scheduleDailyTask(timeToPost) {
+    val events = engineersSGAPI.getEvents(null).filter { event -> event.startDate == singaporeDateTime.date }
+
+    println("Scheduling timer task to send updates")
+
+    val registeredChannels = getRegisteredChannels().map { registeredChannel -> registeredChannel.channelId }
+    println("Registered channels: ${registeredChannels.joinToString(",")}")
+    val textChannels = registeredChannels.map { id -> jda.getTextChannelById(id) }
+
+    textChannels.forEach { textChannel ->
+      println("Sending to ${textChannel?.name}")
+      textChannel?.sendMessage(eventsEmbed(
+        "Events happening today",
+        "Events happening in Singapore today!",
+        events
+      ))?.queue()
     }
   }
 }

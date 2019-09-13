@@ -12,6 +12,7 @@ fun main() {
       globalPath = "com.github.woojiahao"
     }
   }
-  
+
   kUtils.discord.jda.awaitReady()
 }
+

@@ -20,3 +20,6 @@ out/
 *.ipr
 *.iws
 .DS_Store
+
+# Environment file for Docker
+env_file.env

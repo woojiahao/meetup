@@ -1,5 +1,4 @@
 #!/bin/bash
-# TODO: To add default values for prompts for miscellenous information
 ENVIRONMENT_FILE_NAME="env_file.env"
 
 exit_if_blank() {
@@ -14,10 +13,25 @@ write_env() {
 }
 
 echo "Creating env_file.env for Docker secrets"
-read -p "Enter your bot token :: " BOT_TOKEN
-read -p "Enter your postgresql db name :: " POSTGRES_DB
-read -p "Enter your postgresql db user :: " POSTGRES_USER
-read -p "Enter your postgresql db password :: " POSTGRES_PASSWORD
+read -p "Enter your bot token: " BOT_TOKEN
+
+POSTGRES_DB="sgmeetupdiscord"
+read -p "Enter your postgresql db name (sgmeetupdiscord) : " temp_postgres_db
+if [[ ! -z $temp_postgres_db ]]; then
+  POSTGRES_DB=$temp_postgres_db
+fi
+
+POSTGRES_USER="meetup"
+read -p "Enter your postgresql db user (meetup) : " temp_postgres_user
+if [[ ! -z $temp_postgres_user ]]; then
+  POSTGRES_USER=$temp_postgres_user
+fi
+
+POSTGRES_PASSWORD="root"
+read -p "Enter your postgresql db password (root) : " temp_postgres_password
+if [[ ! -z $temp_postgres_password ]]; then
+  POSTGRES_PASSWORD=$temp_postgres_password
+fi
 
 exit_if_blank "$BOT_TOKEN" "bot token"
 exit_if_blank "$POSTGRES_DB" "postgresql db name"

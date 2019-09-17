@@ -24,7 +24,7 @@ exit_if_blank "$POSTGRES_DB" "postgresql db name"
 exit_if_blank "$POSTGRES_USER" "postgresql user"
 exit_if_blank "$POSTGRES_PASSWORD" "postgresql password"
 
-DATABASE_URL="postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@localhost:5432/$POSTGRES_DB"
+DATABASE_URL="postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@db:5432/$POSTGRES_DB"
 
 touch $ENVIRONMENT_FILE_NAME
 

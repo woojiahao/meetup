@@ -1,0 +1,28 @@
+version: "3.7"
+services:
+  db:
+    image: "postgres:12-alpine"
+    restart: always
+    volumes:
+      - meetup:/var/lib/postgresql/data
+    env_file:
+      - env_file.env
+
+  adminer:
+    image: "adminer"
+    restart: always
+    ports:
+      - 8080:8080
+
+  meetup:
+    build:
+      context: "."
+      dockerfile: Dockerfile
+    restart: on-failure
+    env_file:
+      - env_file.env
+    depends_on:
+      - db
+
+volumes:
+  meetup:

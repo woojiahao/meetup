@@ -1,54 +1,59 @@
 # Meetup
-> Discord bot for getting tech event information in Singapore!
+> Discord bot for getting tech event information in Singapore
 
-This bot is used in the Singapore computer science server, link [here.](https://discord.gg/RRZeV5A)
-
-If you have any questions about this bot, feel free to approach me on the server - `@Chill#4048`.
-
-## Setup
-To run the bot either through Heroku or locally, you will need to have a bot account for Discord and obtain the bot token. Also ensure that you have Docker installed on your machine, I have Docker running on my work machine using Manjaro linux.
+## Deployment
+You will need Docker installed on your machine and a bot token.
 
 It is advised you use the scripts included to build your projects.
 
-### Running locally
-Running the Discord bot locally is ideal if you wish to host the bot on a different hosting provider. You can also use it for testing purposes where you wish to host it to contribute.
+For any deployment, you must clone this repository (it is assumed this step is done before any other steps):
 
-1. Clone this repository and navigate to project folder.
+```bash
+$ git clone https://github.com/woojiahao/meetup.git
+$ cd meetup
+```
+
+Before any deployment, generate an `env_file.yml` with the `create-env.sh` script - feel free to leave the defaults if you are unsure and follow the prompts for the rest:
+
+```bash
+$ chmod +x create-env.sh
+$ create-env.sh
+```
+
+The following file should be generated (follow this format if you are unable to run the script):
+
+```
+BOT_TOKEN=<bot_token>
+POSTGRES_DB=sgmeetupdiscord
+POSTGRES_USER=meetup
+POSTGRES_PASSWORD=root
+DATABASE_URL=postgres://meetup:root@db:5432/sgmeetupdiscord
+```
+
+### Stable
+Stable deployment will be done if you wish to deploy the bot that's been tested without errors. The deployment will use the Docker image found on Docker Hub [here.](https://hub.docker.com/r/woojiahao/sg-meetup-discord) This is useful if you just want to deploy and forget about it.
+
+1. Run `docker-compose.yml`
    
    ```bash
-   $ git clone https://github.com/woojiahao/meetup.git
-   $ cd meetup
+   $ docker-compose up
    ```
 
-2. If you are able to use shell scripts, it's advised you follow this step and the bot should be running on your local machine through Docker already, otherwise, skip to step 3 for a manual installation. With this script, you do not need to type long commands to build every time you make a change to the bot.
+And that's all there is to deploying the stable build of the bot.
+
+### Testing/Development
+If you wish to make your own changes to the bot, you will want to see the changes made in real time, rather than having to deploy everything to Docker Hub.
+
+1. Build the image from `docker-compose-local.yml`
    
    ```bash
-   $ chmod +x local-run.sh
-   $ ./local-run.sh # Follow the prompts and everything should install accordingly
+   $ docker-compose -f docker-compose-local.yml build
    ```
 
-   **Note:** The database url is taken from Heroku if your project coincidentally is connected to Heroku already. If you don't have Heroku installed and wish to provide a database url, please supply the database url in the following format and the bot will handle the parsing to JDBC:
-
-   ```
-   postgres://<username>:<password>@<host>:<port>/<database>
-   ```
-
-3. Create a Docker image of the project.
+2. Run `docker-compose-local.yml`
    
    ```bash
-   $ docker build -t <docker image name> .
-   ```
-
-4. Run the Docker image - supply 2 environment variables, `BOT_TOKEN` and `DATABASE_URL`. `DATABASE_URL` should follow the format above.
-   
-   ```bash
-   $ docker run -e BOT_TOKEN=<bot token> -e DATABASE_URL=<database url> -d <docker image name>:latest
-   ```
-
-5. Check if the container is running.
-   
-   ```bash
-   $ docker container ls
+   $ docker-compose -f docker-compose-local.yml up
    ```
 
 ### Heroku
@@ -100,15 +105,6 @@ To push changes to Heroku, simply perform a `git push heroku master`.
    ```bash
    $ heroku ps:scale worker=1
    ```
-
-## Upcoming Features
-* [X] Send upcoming events and today events automatically
-* [X] Display today events
-* [X] Integrate engineers.sg API
-* [X] Speed up Gradle builds
-* [ ] Due to the nature of how KUtils work, JDA cannot be initialised at the start so either move away from KUtils or use a different library
-* [X] Write blog post about deploying Java apps on Docker - memory issue
-* [X] Create separate docker compose to run file without building image and sending to docker hub
 
 ## Libraries Used
 1. [KUtils](https://gitlab.com/Aberrantfox/KUtils)

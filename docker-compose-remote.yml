@@ -1,0 +1,33 @@
+# docker-compose.yml is built for remote deployment
+# Builds the deployed image from woojiahao
+
+version: "3.7"
+services:
+  db:
+    image: "postgres:12-alpine"
+    restart: always
+    volumes:
+      - meetup:/var/lib/postgresql/data
+    env_file:
+      - env_file.env
+    container_name: "meetup_postgresql"
+
+  adminer:
+    image: "adminer"
+    restart: always
+    depends_on:
+      - db
+    container_name: "meetup_adminer"
+
+  meetup:
+    image: "woojiahao/sg-meetup-discord:latest"
+    restart: on-failure
+    env_file:
+      - env_file.env
+    depends_on:
+      - adminer
+    container_name: "meetup_bot"
+
+volumes:
+  meetup:
+    name: "meetup_database"

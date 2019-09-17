@@ -36,7 +36,7 @@ object RegisteredChannels : Table() {
 }
 
 object Configurations : Table() {
-  val index = integer("index").uniqueIndex().primaryKey()
+  val index = integer("index").uniqueIndex().primaryKey().autoIncrement()
   val configurationName = varchar("configuration_name", 256).primaryKey()
   val configurationValue = varchar("configuration_value", 256)
 }

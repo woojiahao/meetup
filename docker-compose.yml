@@ -1,5 +1,5 @@
-# docker-compose.yml is built for local testing/deployment
-# Builds the current folder content and deploys the application
+# docker-compose-local.yml is built for remote deployment
+# Builds the deployed image from woojiahao
 
 version: "3.7"
 services:
@@ -20,9 +20,7 @@ services:
     container_name: "meetup_adminer"
 
   meetup:
-    build:
-      context: "."
-      dockerfile: Dockerfile
+    image: "woojiahao/sg-meetup-discord:latest"
     restart: on-failure
     env_file:
       - env_file.env

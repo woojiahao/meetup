@@ -107,7 +107,8 @@ To push changes to Heroku, simply perform a `git push heroku master`.
 * [X] Integrate engineers.sg API
 * [X] Speed up Gradle builds
 * [ ] Due to the nature of how KUtils work, JDA cannot be initialised at the start so either move away from KUtils or use a different library
-* [ ] Write blog post about deploying Java apps on Docker - memory issue
+* [X] Write blog post about deploying Java apps on Docker - memory issue
+* [ ] Create separate docker compose to run file without building image and sending to docker hub
 
 ## Libraries Used
 1. [KUtils](https://gitlab.com/Aberrantfox/KUtils)

@@ -1,3 +1,6 @@
+# docker-compose.yml is built for local testing/deployment
+# Builds the current folder content and deploys the application
+
 version: "3.7"
 services:
   db:
@@ -7,12 +10,14 @@ services:
       - meetup:/var/lib/postgresql/data
     env_file:
       - env_file.env
+    container_name: "meetup_postgresql"
 
   adminer:
     image: "adminer"
     restart: always
-    ports:
-      - 8080:8080
+    depends_on:
+      - db
+    container_name: "meetup_adminer"
 
   meetup:
     build:
@@ -22,7 +27,9 @@ services:
     env_file:
       - env_file.env
     depends_on:
-      - db
+      - adminer
+    container_name: "meetup_bot"
 
 volumes:
   meetup:
+    name: "meetup_database"

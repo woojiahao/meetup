@@ -1,5 +1,6 @@
 #!/bin/bash
-ENVIRONMENT_FILE_NAME="env_file.env
+# To add default values for prompts for miscellenous information
+ENVIRONMENT_FILE_NAME="env_file.env"
 
 exit_if_blank() {
   if [[ -z "$1" ]]; then

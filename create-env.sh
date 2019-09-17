@@ -1,5 +1,5 @@
 #!/bin/bash
-# To add default values for prompts for miscellenous information
+# TODO: To add default values for prompts for miscellenous information
 ENVIRONMENT_FILE_NAME="env_file.env"
 
 exit_if_blank() {

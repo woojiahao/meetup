@@ -30,13 +30,15 @@ class Configuration(val index: Int, val name: String, val value: String) {
 }
 
 object RegisteredChannels : Table() {
-  val channelId = varchar("channel_id", 20).primaryKey()
+  val channelId = varchar("channel_id", 20)
   val serverId = varchar("server_id", 20)
   val isEnabled = bool("is_enabled").default(true)
+  override val primaryKey = PrimaryKey(channelId)
 }
 
 object Configurations : Table() {
-  val index = integer("index").uniqueIndex().primaryKey().autoIncrement()
-  val configurationName = varchar("configuration_name", 256).primaryKey()
+  val index = integer("index").uniqueIndex().autoIncrement()
+  val configurationName = varchar("configuration_name", 256)
   val configurationValue = varchar("configuration_value", 256)
+  override val primaryKey = PrimaryKey(index, configurationName)
 }

@@ -4,14 +4,11 @@ plugins {
   id 'java'
 }
 
-apply plugin: 'java'
-apply plugin: 'kotlin'
-
-sourceCompatibility = 17
-targetCompatibility = 17
-
 group 'com.github.woojiahao'
 version '1.0'
+
+apply plugin: 'java'
+apply plugin: 'kotlin'
 
 repositories {
   mavenCentral()
@@ -38,10 +35,10 @@ test {
 }
 
 compileKotlin {
-  kotlinOptions.jvmTarget = "17"
+  kotlinOptions.jvmTarget = "1.8"
 }
 compileTestKotlin {
-  kotlinOptions.jvmTarget = "17"
+  kotlinOptions.jvmTarget = "1.8"
 }
 
 sourceSets {
@@ -50,12 +47,14 @@ sourceSets {
 }
 
 jar {
+  duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+
   manifest {
-    attributes "Main-Class": "BotKt"
+    attributes "Main-Class": "com.github.woojiahao.BotKt"
   }
 
   from {
-    configurations.runtimeClasspath.collect { zipTree(it) }
+    configurations.compileClasspath.collect { zipTree(it) }
   }
 }
 

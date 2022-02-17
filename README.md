@@ -76,7 +76,7 @@ To push changes to Heroku, simply perform a `git push heroku master`.
    $ git remote -v # There should be a remote named 'heroku'
    ```
 
-4. Add the Heroku Postgresql addon - the database is not used heavily, just to store some preferences.
+4. Add the Heroku Postgresql addon - the com.github.woojiahao.database is not used heavily, just to store some preferences.
    
    ```bash
    $ heroku addons:create heroku-postgresql:hobby-dev

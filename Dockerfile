@@ -1,4 +1,4 @@
-FROM gradle:5.6.1-jdk11 AS builder
+FROM gradle:7-jdk11 AS builder
 USER root
 WORKDIR /builder
 ADD . /builder
